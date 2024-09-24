@@ -2,8 +2,8 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 from torch.utils.data import DataLoader
-from diffusion import UNet  
-from encoder import Encoder  
+from diffusion import Diffusion as UNet  
+from encoder import VAE_Encoder as Encoder  
 from ddpm import DDPMSampler
 from tqdm import tqdm
 from pipeline import get_time_embedding

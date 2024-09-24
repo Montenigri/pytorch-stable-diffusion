@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
 import torch.optim as optim
-from torch.utils.data import DataLoader
+from dataset import Dataset
 from diffusion import Diffusion as UNet  
 from encoder import VAE_Encoder as Encoder  
 from ddpm import DDPMSampler
@@ -9,10 +9,8 @@ from tqdm import tqdm
 from pipeline import get_time_embedding
 
 
-def train_unet(num_epochs, train_dataset, val_dataset, batch_size, learning_rate, device, seed=None, n_inference_steps=50):
-    # Carica i dati
-    train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
-    val_loader = DataLoader(val_dataset, batch_size=batch_size, shuffle=False)
+def train_unet(num_epochs, train_dataset, batch_size, learning_rate, device, seed=None, n_inference_steps=50):
+    train_loader, val_loader = Dataset(train_dataset, batch_size=batch_size)
     
     model = UNet().to(device)
     encoder = Encoder().to(device)
@@ -95,8 +93,5 @@ def train_unet(num_epochs, train_dataset, val_dataset, batch_size, learning_rate
     torch.save(model.state_dict(), 'unet_model.pth')
 
 train_data_path = 'path/to/train/data'  # Sostituisci con il percorso del tuo dataset di addestramento
-val_data_path = 'path/to/val/data'  # Sostituisci con il percorso del tuo dataset di validazione
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-train_dataset = CustomDataset(train_data_path)  # Sostituisci con il percorso del tuo dataset di addestramento
-val_dataset = CustomDataset(val_data_path)  # Sostituisci con il percorso del tuo dataset di validazione
-train_unet(num_epochs=25, train_dataset=train_dataset, val_dataset=val_dataset, batch_size=16, learning_rate=0.001, device=device)
+train_unet(num_epochs=25, train_dataset=train_data_path, batch_size=16, learning_rate=0.001, device=device)
